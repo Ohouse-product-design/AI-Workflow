@@ -1,0 +1,141 @@
+{
+  "$schema": "https://design-tokens.org",
+  "description": "ODS 컬러 토큰 — Primitive(원시값) + Semantic(역할 기반)",
+
+  "primitive": {
+    "white": "#FFFFFF",
+    "black": "#000000",
+
+    "gray": {
+      "50": "#F8F9FA",
+      "100": "#F1F3F5",
+      "200": "#E9ECEF",
+      "300": "#DEE2E6",
+      "400": "#CED4DA",
+      "500": "#ADB5BD",
+      "600": "#868E96",
+      "700": "#495057",
+      "800": "#343A40",
+      "900": "#212529"
+    },
+
+    "blue": {
+      "50": "#E7F5FF",
+      "100": "#D0EBFF",
+      "200": "#A5D8FF",
+      "300": "#74C0FC",
+      "400": "#4DABF7",
+      "500": "#339AF0",
+      "600": "#228BE6",
+      "700": "#1C7ED6",
+      "800": "#1971C2",
+      "900": "#1864AB"
+    },
+
+    "red": {
+      "50": "#FFF5F5",
+      "100": "#FFE3E3",
+      "200": "#FFC9C9",
+      "300": "#FFA8A8",
+      "400": "#FF8787",
+      "500": "#FF6B6B",
+      "600": "#FA5252",
+      "700": "#F03E3E",
+      "800": "#E03131",
+      "900": "#C92A2A"
+    },
+
+    "green": {
+      "50": "#EBFBEE",
+      "100": "#D3F9D8",
+      "200": "#B2F2BB",
+      "300": "#8CE99A",
+      "400": "#69DB7C",
+      "500": "#51CF66",
+      "600": "#40C057",
+      "700": "#37B24D",
+      "800": "#2F9E44",
+      "900": "#2B8A3E"
+    },
+
+    "orange": {
+      "50": "#FFF4E6",
+      "100": "#FFE8CC",
+      "200": "#FFC078",
+      "300": "#FFA94D",
+      "400": "#FF922B",
+      "500": "#FD7E14",
+      "600": "#F76707",
+      "700": "#E8590C",
+      "800": "#D9480F",
+      "900": "#C05600"
+    },
+
+    "teal": {
+      "50": "#E6FCF5",
+      "100": "#C3FAE8",
+      "200": "#96F2D7",
+      "300": "#63E6BE",
+      "400": "#38D9A9",
+      "500": "#20C997",
+      "600": "#12B886",
+      "700": "#0CA678",
+      "800": "#099268",
+      "900": "#087F5B"
+    }
+  },
+
+  "semantic": {
+    "background": {
+      "primary": "{primitive.white}",
+      "secondary": "{primitive.gray.50}",
+      "tertiary": "{primitive.gray.100}",
+      "inverse": "{primitive.gray.900}",
+      "brand": "{primitive.blue.50}"
+    },
+    "text": {
+      "primary": "{primitive.gray.900}",
+      "secondary": "{primitive.gray.700}",
+      "tertiary": "{primitive.gray.500}",
+      "disabled": "{primitive.gray.400}",
+      "inverse": "{primitive.white}",
+      "brand": "{primitive.blue.700}",
+      "error": "{primitive.red.700}",
+      "success": "{primitive.green.700}",
+      "warning": "{primitive.orange.700}"
+    },
+    "border": {
+      "default": "{primitive.gray.300}",
+      "strong": "{primitive.gray.500}",
+      "focus": "{primitive.blue.500}",
+      "error": "{primitive.red.500}",
+      "disabled": "{primitive.gray.200}"
+    },
+    "action": {
+      "primary": "{primitive.blue.600}",
+      "primaryHover": "{primitive.blue.700}",
+      "primaryActive": "{primitive.blue.800}",
+      "primaryDisabled": "{primitive.blue.200}",
+      "secondary": "{primitive.gray.100}",
+      "secondaryHover": "{primitive.gray.200}",
+      "secondaryActive": "{primitive.gray.300}",
+      "danger": "{primitive.red.600}",
+      "dangerHover": "{primitive.red.700}",
+      "success": "{primitive.green.600}"
+    },
+    "status": {
+      "info": "{primitive.blue.500}",
+      "infoBg": "{primitive.blue.50}",
+      "success": "{primitive.green.500}",
+      "successBg": "{primitive.green.50}",
+      "warning": "{primitive.orange.500}",
+      "warningBg": "{primitive.orange.50}",
+      "error": "{primitive.red.500}",
+      "errorBg": "{primitive.red.50}"
+    },
+    "overlay": {
+      "dim": "rgba(0, 0, 0, 0.5)",
+      "light": "rgba(255, 255, 255, 0.8)"
+    }
+  }
+}

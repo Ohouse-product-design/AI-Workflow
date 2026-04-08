@@ -1,0 +1,115 @@
+<!-- ODS Modal Component — 타입별 HTML Snippet -->
+<style>
+  .ods-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    padding: 24px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .ods-modal {
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08), 0 3px 6px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 400px;
+    overflow: hidden;
+  }
+  .ods-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 0;
+  }
+  .ods-modal__title {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 28px;
+    color: #212529;
+    margin: 0;
+  }
+  .ods-modal__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: -10px -12px -10px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #868E96;
+  }
+  .ods-modal__body {
+    padding: 12px 24px 24px;
+    font-size: 16px;
+    line-height: 24px;
+    color: #495057;
+  }
+  .ods-modal__footer {
+    display: flex;
+    gap: 8px;
+    padding: 0 24px 24px;
+  }
+  .ods-modal__footer .ods-btn { flex: 1; }
+
+  /* Alert (아이콘 중심) */
+  .ods-modal--alert .ods-modal__body { text-align: center; padding-top: 24px; }
+  .ods-modal--alert .ods-modal__icon { font-size: 48px; margin-bottom: 16px; }
+  .ods-modal--alert .ods-modal__title { text-align: center; }
+</style>
+
+<!-- Default: 확인 모달 -->
+<div class="ods-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title-1">
+  <div class="ods-modal">
+    <div class="ods-modal__header">
+      <h2 class="ods-modal__title" id="modal-title-1">리뷰 삭제</h2>
+      <button class="ods-modal__close" aria-label="닫기">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="ods-modal__body">
+      작성하신 리뷰를 삭제하시겠습니까? 삭제된 리뷰는 복구할 수 없습니다.
+    </div>
+    <div class="ods-modal__footer">
+      <button class="ods-btn ods-btn--secondary">취소</button>
+      <button class="ods-btn ods-btn--danger">삭제</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm: 일반 확인 -->
+<div class="ods-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title-2">
+  <div class="ods-modal">
+    <div class="ods-modal__header">
+      <h2 class="ods-modal__title" id="modal-title-2">저장 완료</h2>
+    </div>
+    <div class="ods-modal__body">
+      변경사항이 저장되었습니다.
+    </div>
+    <div class="ods-modal__footer">
+      <button class="ods-btn ods-btn--primary">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- Alert: 아이콘 중심 -->
+<div class="ods-modal-backdrop" role="alertdialog" aria-modal="true" aria-labelledby="modal-title-3">
+  <div class="ods-modal ods-modal--alert">
+    <div class="ods-modal__body">
+      <div class="ods-modal__icon" aria-hidden="true">⚠️</div>
+      <h2 class="ods-modal__title" id="modal-title-3">네트워크 오류</h2>
+      <p style="margin-top: 8px;">인터넷 연결을 확인해주세요.</p>
+    </div>
+    <div class="ods-modal__footer">
+      <button class="ods-btn ods-btn--secondary">취소</button>
+      <button class="ods-btn ods-btn--primary">다시 시도</button>
+    </div>
+  </div>
+</div>

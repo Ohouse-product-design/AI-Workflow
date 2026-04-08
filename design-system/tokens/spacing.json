@@ -1,0 +1,74 @@
+{
+  "$schema": "https://design-tokens.org",
+  "description": "ODS 간격 토큰 — 4px 기반 스케일",
+
+  "scale": {
+    "0": "0px",
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "20px",
+    "6": "24px",
+    "8": "32px",
+    "10": "40px",
+    "12": "48px",
+    "16": "64px",
+    "20": "80px",
+    "24": "96px"
+  },
+
+  "semantic": {
+    "inset": {
+      "xs": "{scale.1}",
+      "sm": "{scale.2}",
+      "md": "{scale.4}",
+      "lg": "{scale.6}",
+      "xl": "{scale.8}"
+    },
+    "stack": {
+      "xs": "{scale.1}",
+      "sm": "{scale.2}",
+      "md": "{scale.4}",
+      "lg": "{scale.6}",
+      "xl": "{scale.10}"
+    },
+    "inline": {
+      "xs": "{scale.1}",
+      "sm": "{scale.2}",
+      "md": "{scale.3}",
+      "lg": "{scale.4}",
+      "xl": "{scale.6}"
+    }
+  },
+
+  "layout": {
+    "pageMargin": {
+      "mobile": "{scale.4}",
+      "tablet": "{scale.6}",
+      "desktop": "{scale.10}"
+    },
+    "sectionGap": {
+      "mobile": "{scale.8}",
+      "tablet": "{scale.10}",
+      "desktop": "{scale.12}"
+    },
+    "contentMaxWidth": "1200px",
+    "gridColumns": {
+      "mobile": 4,
+      "tablet": 8,
+      "desktop": 12
+    },
+    "gridGutter": {
+      "mobile": "{scale.4}",
+      "tablet": "{scale.5}",
+      "desktop": "{scale.6}"
+    }
+  },
+
+  "touchTarget": {
+    "minimum": "44px",
+    "recommended": "48px",
+    "note": "접근성 기준: 최소 터치 영역 44x44px (WCAG 2.5.8)"
+  }
+}

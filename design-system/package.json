@@ -1,0 +1,20 @@
+{
+  "name": "@ohouse/design-system",
+  "version": "0.1.0",
+  "description": "ODS (Ohouse Design System) - 오늘의집 디자인 시스템",
+  "author": "Ohouse Product Design Team",
+  "license": "UNLICENSED",
+  "private": true,
+  "keywords": ["design-system", "ohouse", "ods", "design-tokens"],
+  "files": [
+    "tokens/",
+    "components/",
+    "foundations/",
+    "ai-context/",
+    "DESIGN.md"
+  ],
+  "scripts": {
+    "preview": "python3 -m http.server 8080",
+    "validate-tokens": "for f in tokens/*.json; do python3 -m json.tool \"$f\" > /dev/null && echo \"$f OK\" || echo \"$f INVALID\"; done"
+  }
+}

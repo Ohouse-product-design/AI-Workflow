@@ -1,0 +1,96 @@
+<!-- ODS Chip Component — 상태별 HTML Snippet -->
+<style>
+  .ods-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 32px;
+    padding: 0 12px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    color: #495057;
+    background: #FFFFFF;
+    border: 1px solid #DEE2E6;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  @media (hover: hover) {
+    .ods-chip:hover { background: #F8F9FA; }
+  }
+  .ods-chip--selected {
+    background: #E7F5FF;
+    border-color: #228BE6;
+    color: #1C7ED6;
+  }
+  .ods-chip--disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+  .ods-chip__remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-left: 2px;
+    margin-right: -4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* Chip Group */
+  .ods-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>
+
+<!-- Default -->
+<div class="ods-chip-group">
+  <button class="ods-chip">모던</button>
+  <button class="ods-chip">내추럴</button>
+  <button class="ods-chip">미니멀</button>
+  <button class="ods-chip">빈티지</button>
+</div>
+
+<!-- Selected -->
+<div class="ods-chip-group">
+  <button class="ods-chip ods-chip--selected" aria-pressed="true">모던</button>
+  <button class="ods-chip" aria-pressed="false">내추럴</button>
+  <button class="ods-chip ods-chip--selected" aria-pressed="true">미니멀</button>
+  <button class="ods-chip" aria-pressed="false">빈티지</button>
+</div>
+
+<!-- Disabled -->
+<div class="ods-chip-group">
+  <button class="ods-chip ods-chip--disabled">품절</button>
+</div>
+
+<!-- Removable (필터 태그) -->
+<div class="ods-chip-group">
+  <span class="ods-chip ods-chip--selected">
+    모던
+    <button class="ods-chip__remove" aria-label="모던 필터 제거">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+        <path d="M3.5 3.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      </svg>
+    </button>
+  </span>
+  <span class="ods-chip ods-chip--selected">
+    1인 가구
+    <button class="ods-chip__remove" aria-label="1인 가구 필터 제거">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+        <path d="M3.5 3.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      </svg>
+    </button>
+  </span>
+</div>

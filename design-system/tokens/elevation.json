@@ -1,0 +1,54 @@
+{
+  "$schema": "https://design-tokens.org",
+  "description": "ODS 깊이/그림자 토큰 — 레이어 위계 시스템",
+
+  "shadow": {
+    "level0": {
+      "value": "none",
+      "usage": "기본 상태, 그림자 없음"
+    },
+    "level1": {
+      "value": "0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06)",
+      "usage": "카드, 리스트 아이템 호버"
+    },
+    "level2": {
+      "value": "0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06)",
+      "usage": "드롭다운, 팝오버, 플로팅 버튼"
+    },
+    "level3": {
+      "value": "0 10px 20px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.05)",
+      "usage": "모달, 바텀시트"
+    },
+    "level4": {
+      "value": "0 20px 40px rgba(0, 0, 0, 0.1), 0 5px 10px rgba(0, 0, 0, 0.04)",
+      "usage": "토스트, 최상위 오버레이"
+    }
+  },
+
+  "zIndex": {
+    "base": 0,
+    "dropdown": 100,
+    "sticky": 200,
+    "fixed": 300,
+    "backdrop": 400,
+    "modal": 500,
+    "popover": 600,
+    "toast": 700,
+    "tooltip": 800
+  },
+
+  "borderRadius": {
+    "none": "0",
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px",
+    "full": "9999px"
+  },
+
+  "rules": [
+    "드롭쉐도우는 level1~level4만 사용. 커스텀 그림자 금지",
+    "z-index는 반드시 토큰 값 사용. 임의의 숫자(999, 10000 등) 금지",
+    "모달 위에 모달을 띄우지 않는다 (최대 1 depth)"
+  ]
+}

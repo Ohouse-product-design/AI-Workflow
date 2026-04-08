@@ -1,0 +1,95 @@
+<!-- ODS Tab Component — 상태별 HTML Snippet -->
+<style>
+  .ods-tabs {
+    display: flex;
+    border-bottom: 1px solid #E9ECEF;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .ods-tabs::-webkit-scrollbar { display: none; }
+
+  .ods-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: #868E96;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    flex-shrink: 0;
+  }
+  .ods-tab--active {
+    color: #212529;
+    border-bottom-color: #212529;
+    font-weight: 600;
+  }
+  @media (hover: hover) {
+    .ods-tab:hover { color: #495057; }
+  }
+  .ods-tab:disabled,
+  .ods-tab--disabled {
+    color: #CED4DA;
+    pointer-events: none;
+  }
+  .ods-tab__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #228BE6;
+    color: #FFFFFF;
+    border-radius: 9999px;
+  }
+
+  /* Pill Tabs (둥근 탭) */
+  .ods-tabs--pill {
+    border-bottom: none;
+    gap: 8px;
+    padding: 0 16px;
+  }
+  .ods-tabs--pill .ods-tab {
+    border: 1px solid #DEE2E6;
+    border-radius: 9999px;
+    padding: 8px 16px;
+  }
+  .ods-tabs--pill .ods-tab--active {
+    background: #212529;
+    color: #FFFFFF;
+    border-color: #212529;
+  }
+</style>
+
+<!-- Default: 기본 탭 -->
+<div class="ods-tabs" role="tablist" aria-label="카테고리">
+  <button class="ods-tab ods-tab--active" role="tab" aria-selected="true" aria-controls="panel-1">전체</button>
+  <button class="ods-tab" role="tab" aria-selected="false" aria-controls="panel-2">가구</button>
+  <button class="ods-tab" role="tab" aria-selected="false" aria-controls="panel-3">
+    패브릭
+    <span class="ods-tab__badge">12</span>
+  </button>
+  <button class="ods-tab" role="tab" aria-selected="false" aria-controls="panel-4">조명</button>
+  <button class="ods-tab ods-tab--disabled" role="tab" aria-selected="false" aria-disabled="true">수납 (준비중)</button>
+</div>
+
+<!-- Pill Tabs -->
+<div class="ods-tabs ods-tabs--pill" role="tablist" aria-label="필터">
+  <button class="ods-tab ods-tab--active" role="tab" aria-selected="true">전체</button>
+  <button class="ods-tab" role="tab" aria-selected="false">1인 가구</button>
+  <button class="ods-tab" role="tab" aria-selected="false">신혼</button>
+  <button class="ods-tab" role="tab" aria-selected="false">가족</button>
+</div>

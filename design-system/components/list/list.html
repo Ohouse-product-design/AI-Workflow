@@ -1,0 +1,142 @@
+<!-- ODS List Component — 상태별 HTML Snippet -->
+<style>
+  .ods-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .ods-list__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid #F1F3F5;
+  }
+  .ods-list__item:last-child { border-bottom: none; }
+  .ods-list__thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #F1F3F5;
+    flex-shrink: 0;
+  }
+  .ods-list__content { flex: 1; min-width: 0; }
+  .ods-list__title {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: #212529;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ods-list__desc {
+    font-size: 14px;
+    line-height: 20px;
+    color: #868E96;
+    margin: 2px 0 0;
+  }
+  .ods-list__trailing {
+    font-size: 14px;
+    font-weight: 600;
+    color: #212529;
+    flex-shrink: 0;
+  }
+
+  /* Empty */
+  .ods-list__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 16px;
+    text-align: center;
+  }
+  .ods-list__empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .ods-list__empty-title { font-size: 17px; font-weight: 600; color: #212529; margin: 0; }
+  .ods-list__empty-desc { font-size: 14px; color: #868E96; margin: 8px 0 24px; }
+
+  /* Error */
+  .ods-list__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 16px;
+    text-align: center;
+  }
+  .ods-list__error-title { font-size: 16px; font-weight: 500; color: #212529; margin: 0; }
+  .ods-list__error-desc { font-size: 14px; color: #868E96; margin: 8px 0 24px; }
+
+  /* Loading Skeleton */
+  .ods-list__item--skeleton .ods-list__thumb,
+  .ods-list__item--skeleton .ods-list__title,
+  .ods-list__item--skeleton .ods-list__desc {
+    background: linear-gradient(90deg, #F1F3F5 25%, #E9ECEF 50%, #F1F3F5 75%);
+    background-size: 200% 100%;
+    animation: ods-shimmer 1.5s infinite;
+    border-radius: 4px;
+    color: transparent;
+  }
+  .ods-list__item--skeleton .ods-list__title { width: 60%; height: 20px; }
+  .ods-list__item--skeleton .ods-list__desc { width: 40%; height: 16px; }
+  @keyframes ods-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+
+<!-- Default -->
+<ul class="ods-list" role="list">
+  <li class="ods-list__item">
+    <img class="ods-list__thumb" src="https://via.placeholder.com/56" alt="상품" />
+    <div class="ods-list__content">
+      <p class="ods-list__title">북유럽 스타일 쿠션 커버</p>
+      <p class="ods-list__desc">45 x 45cm ・ 그레이</p>
+    </div>
+    <span class="ods-list__trailing">19,900원</span>
+  </li>
+  <li class="ods-list__item">
+    <img class="ods-list__thumb" src="https://via.placeholder.com/56" alt="상품" />
+    <div class="ods-list__content">
+      <p class="ods-list__title">LED 무드등 수면등</p>
+      <p class="ods-list__desc">USB 충전 ・ 3단 밝기</p>
+    </div>
+    <span class="ods-list__trailing">29,000원</span>
+  </li>
+</ul>
+
+<!-- Loading (Skeleton) -->
+<ul class="ods-list" role="list" aria-busy="true">
+  <li class="ods-list__item ods-list__item--skeleton">
+    <div class="ods-list__thumb"></div>
+    <div class="ods-list__content">
+      <p class="ods-list__title">&nbsp;</p>
+      <p class="ods-list__desc">&nbsp;</p>
+    </div>
+  </li>
+  <li class="ods-list__item ods-list__item--skeleton">
+    <div class="ods-list__thumb"></div>
+    <div class="ods-list__content">
+      <p class="ods-list__title">&nbsp;</p>
+      <p class="ods-list__desc">&nbsp;</p>
+    </div>
+  </li>
+</ul>
+
+<!-- Empty -->
+<div class="ods-list__empty">
+  <div class="ods-list__empty-icon" aria-hidden="true">📦</div>
+  <p class="ods-list__empty-title">아직 상품이 없어요</p>
+  <p class="ods-list__empty-desc">마음에 드는 상품을 스크랩해보세요</p>
+  <button class="ods-btn ods-btn--primary">상품 보러 가기</button>
+</div>
+
+<!-- Error -->
+<div class="ods-list__error">
+  <p class="ods-list__error-title">일시적인 오류가 발생했어요</p>
+  <p class="ods-list__error-desc">잠시 후 다시 시도해주세요</p>
+  <button class="ods-btn ods-btn--secondary">다시 시도</button>
+</div>

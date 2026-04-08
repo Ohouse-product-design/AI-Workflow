@@ -1,0 +1,156 @@
+<!-- ODS Button Component — 상태별 HTML Snippet -->
+<style>
+  .ods-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+    min-height: 44px;
+    padding: 12px 20px;
+  }
+
+  /* Primary */
+  .ods-btn--primary {
+    background-color: #228BE6;
+    color: #FFFFFF;
+  }
+  @media (hover: hover) {
+    .ods-btn--primary:hover { background-color: #1C7ED6; }
+  }
+  .ods-btn--primary:active { background-color: #1971C2; }
+
+  /* Secondary */
+  .ods-btn--secondary {
+    background-color: #F1F3F5;
+    color: #212529;
+  }
+  @media (hover: hover) {
+    .ods-btn--secondary:hover { background-color: #E9ECEF; }
+  }
+  .ods-btn--secondary:active { background-color: #DEE2E6; }
+
+  /* Outline */
+  .ods-btn--outline {
+    background-color: transparent;
+    color: #212529;
+    border: 1px solid #DEE2E6;
+  }
+  @media (hover: hover) {
+    .ods-btn--outline:hover { background-color: #F8F9FA; }
+  }
+
+  /* Ghost (텍스트만) */
+  .ods-btn--ghost {
+    background-color: transparent;
+    color: #228BE6;
+    padding: 12px 8px;
+  }
+  @media (hover: hover) {
+    .ods-btn--ghost:hover { background-color: #E7F5FF; }
+  }
+
+  /* Danger */
+  .ods-btn--danger {
+    background-color: #FA5252;
+    color: #FFFFFF;
+  }
+  @media (hover: hover) {
+    .ods-btn--danger:hover { background-color: #F03E3E; }
+  }
+
+  /* Disabled */
+  .ods-btn:disabled,
+  .ods-btn--disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  /* Loading */
+  .ods-btn--loading {
+    pointer-events: none;
+    position: relative;
+  }
+  .ods-btn--loading .ods-btn__label { visibility: hidden; }
+  .ods-btn--loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: ods-spin 0.6s linear infinite;
+  }
+  @keyframes ods-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Sizes */
+  .ods-btn--sm { min-height: 36px; padding: 8px 16px; font-size: 13px; }
+  .ods-btn--lg { min-height: 52px; padding: 16px 24px; font-size: 16px; }
+  .ods-btn--full { width: 100%; }
+</style>
+
+<!-- Default: Primary -->
+<button class="ods-btn ods-btn--primary">
+  <span class="ods-btn__label">확인</span>
+</button>
+
+<!-- Default: Secondary -->
+<button class="ods-btn ods-btn--secondary">
+  <span class="ods-btn__label">취소</span>
+</button>
+
+<!-- Default: Outline -->
+<button class="ods-btn ods-btn--outline">
+  <span class="ods-btn__label">더보기</span>
+</button>
+
+<!-- Default: Ghost -->
+<button class="ods-btn ods-btn--ghost">
+  <span class="ods-btn__label">건너뛰기</span>
+</button>
+
+<!-- Default: Danger -->
+<button class="ods-btn ods-btn--danger">
+  <span class="ods-btn__label">삭제</span>
+</button>
+
+<!-- Disabled -->
+<button class="ods-btn ods-btn--primary" disabled>
+  <span class="ods-btn__label">확인</span>
+</button>
+
+<!-- Loading -->
+<button class="ods-btn ods-btn--primary ods-btn--loading">
+  <span class="ods-btn__label">저장 중</span>
+</button>
+
+<!-- Full Width (CTA) -->
+<button class="ods-btn ods-btn--primary ods-btn--lg ods-btn--full">
+  <span class="ods-btn__label">상품 구매하기</span>
+</button>
+
+<!-- Icon + Label -->
+<button class="ods-btn ods-btn--secondary">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+    <path d="M8 1a1 1 0 011 1v5h5a1 1 0 110 2H9v5a1 1 0 11-2 0V9H2a1 1 0 010-2h5V2a1 1 0 011-1z"/>
+  </svg>
+  <span class="ods-btn__label">추가</span>
+</button>
+
+<!-- Icon Only (aria-label 필수) -->
+<button class="ods-btn ods-btn--ghost" aria-label="닫기" style="padding: 12px;">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+    <path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/>
+  </svg>
+</button>

@@ -1,0 +1,122 @@
+<!-- ODS Card Component — 상태별 HTML Snippet -->
+<style>
+  .ods-card {
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.15s ease;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  @media (hover: hover) {
+    .ods-card:hover {
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    }
+  }
+  .ods-card--bordered { border: 1px solid #DEE2E6; }
+  .ods-card--selected { border: 2px solid #228BE6; }
+
+  .ods-card__image {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    background: #F1F3F5;
+  }
+  .ods-card__body { padding: 16px; }
+  .ods-card__title {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 24px;
+    color: #212529;
+    margin: 0;
+  }
+  .ods-card__desc {
+    font-size: 14px;
+    line-height: 20px;
+    color: #495057;
+    margin: 4px 0 0;
+  }
+  .ods-card__meta {
+    font-size: 12px;
+    line-height: 16px;
+    color: #ADB5BD;
+    margin-top: 8px;
+  }
+  .ods-card__price {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+    color: #212529;
+    margin-top: 8px;
+  }
+  .ods-card__price-original {
+    font-size: 14px;
+    color: #ADB5BD;
+    text-decoration: line-through;
+    margin-right: 4px;
+  }
+  .ods-card__discount {
+    color: #FA5252;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+
+  /* Skeleton */
+  .ods-card--skeleton .ods-card__image,
+  .ods-card--skeleton .ods-card__title,
+  .ods-card--skeleton .ods-card__desc {
+    background: linear-gradient(90deg, #F1F3F5 25%, #E9ECEF 50%, #F1F3F5 75%);
+    background-size: 200% 100%;
+    animation: ods-shimmer 1.5s infinite;
+    color: transparent;
+    border-radius: 4px;
+  }
+  .ods-card--skeleton .ods-card__title { width: 70%; height: 24px; }
+  .ods-card--skeleton .ods-card__desc { width: 90%; height: 20px; }
+  @keyframes ods-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+
+<!-- Default: 상품 카드 -->
+<article class="ods-card ods-card--bordered">
+  <img class="ods-card__image" src="https://via.placeholder.com/400x300" alt="상품 이미지" loading="lazy" />
+  <div class="ods-card__body">
+    <h3 class="ods-card__title">모던 원목 사이드 테이블</h3>
+    <p class="ods-card__desc">깔끔한 원목 소재의 미니멀 사이드 테이블</p>
+    <div class="ods-card__price">
+      <span class="ods-card__discount">32%</span>
+      <span>89,000원</span>
+    </div>
+    <div class="ods-card__meta">리뷰 1,234 ・ 스크랩 567</div>
+  </div>
+</article>
+
+<!-- Selected -->
+<article class="ods-card ods-card--selected">
+  <img class="ods-card__image" src="https://via.placeholder.com/400x300" alt="상품 이미지" loading="lazy" />
+  <div class="ods-card__body">
+    <h3 class="ods-card__title">선택된 카드 상태</h3>
+    <p class="ods-card__desc">파란 테두리로 선택 상태 표시</p>
+  </div>
+</article>
+
+<!-- Skeleton (Loading) -->
+<article class="ods-card ods-card--bordered ods-card--skeleton">
+  <div class="ods-card__image"></div>
+  <div class="ods-card__body">
+    <div class="ods-card__title">&nbsp;</div>
+    <div class="ods-card__desc">&nbsp;</div>
+  </div>
+</article>
+
+<!-- 콘텐츠 카드 (이미지 없음) -->
+<article class="ods-card ods-card--bordered">
+  <div class="ods-card__body">
+    <h3 class="ods-card__title">인테리어 팁: 작은 방 넓어 보이게</h3>
+    <p class="ods-card__desc">밝은 컬러와 거울을 활용해 시각적으로 공간을 확장하는 방법을 알려드립니다.</p>
+    <div class="ods-card__meta">2026.04.01 ・ 조회 3,456</div>
+  </div>
+</article>

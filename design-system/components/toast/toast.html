@@ -1,0 +1,109 @@
+<!-- ODS Toast Component — 타입별 HTML Snippet -->
+<style>
+  .ods-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.04);
+    min-width: 280px;
+    max-width: 400px;
+    z-index: 700;
+    animation: ods-toast-in 0.3s ease;
+  }
+  @keyframes ods-toast-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ods-toast__icon { flex-shrink: 0; width: 20px; height: 20px; }
+  .ods-toast__message { flex: 1; }
+  .ods-toast__action {
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 600;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  /* Info */
+  .ods-toast--info {
+    background: #212529;
+    color: #FFFFFF;
+  }
+  .ods-toast--info .ods-toast__action { color: #74C0FC; }
+
+  /* Success */
+  .ods-toast--success {
+    background: #EBFBEE;
+    color: #2B8A3E;
+    border: 1px solid #B2F2BB;
+  }
+  .ods-toast--success .ods-toast__action { color: #2B8A3E; }
+
+  /* Error */
+  .ods-toast--error {
+    background: #FFF5F5;
+    color: #C92A2A;
+    border: 1px solid #FFC9C9;
+  }
+  .ods-toast--error .ods-toast__action { color: #C92A2A; }
+
+  /* Warning */
+  .ods-toast--warning {
+    background: #FFF4E6;
+    color: #C05600;
+    border: 1px solid #FFC078;
+  }
+  .ods-toast--warning .ods-toast__action { color: #C05600; }
+
+  /* Toast Container */
+  .ods-toast-container {
+    position: fixed;
+    bottom: 80px; /* Above bottom nav */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 700;
+  }
+</style>
+
+<!-- Info (기본) -->
+<div class="ods-toast ods-toast--info" role="status" aria-live="polite">
+  <span class="ods-toast__message">스크랩에 저장되었습니다</span>
+  <button class="ods-toast__action">보기</button>
+</div>
+
+<!-- Success -->
+<div class="ods-toast ods-toast--success" role="status" aria-live="polite">
+  <svg class="ods-toast__icon" viewBox="0 0 20 20" fill="currentColor">
+    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+  </svg>
+  <span class="ods-toast__message">리뷰가 등록되었습니다</span>
+</div>
+
+<!-- Error -->
+<div class="ods-toast ods-toast--error" role="alert">
+  <svg class="ods-toast__icon" viewBox="0 0 20 20" fill="currentColor">
+    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+  </svg>
+  <span class="ods-toast__message">저장에 실패했습니다. 다시 시도해주세요.</span>
+  <button class="ods-toast__action">재시도</button>
+</div>
+
+<!-- Warning -->
+<div class="ods-toast ods-toast--warning" role="status" aria-live="polite">
+  <svg class="ods-toast__icon" viewBox="0 0 20 20" fill="currentColor">
+    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+  </svg>
+  <span class="ods-toast__message">네트워크 연결이 불안정합니다</span>
+</div>
