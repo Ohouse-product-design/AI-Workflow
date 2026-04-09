@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "AI Workflow Map (static)",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8080"],
-      "port": 8080
+      "runtimeExecutable": "ruby",
+      "runtimeArgs": ["-e", "Dir.chdir('/Users/yohan.lee/Desktop/Claude_Study/design-workflow');require'webrick';WEBrick::HTTPServer.new(Port:8080,DocumentRoot:'/Users/yohan.lee/Desktop/Claude_Study/design-workflow').start"],
+      "port": 8080,
+      "autoPort": false
     }
   ]
 }
