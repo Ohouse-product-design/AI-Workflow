@@ -6,10 +6,11 @@
 
 | 항목 | 내용 |
 |------|------|
-| 스킬 파일 | `~/.claude/commands/funnel-check.md` |
-| 호출 | `/funnel-check [화면명/플로우명/자연어]` |
+| 팀 공용 스킬 | `~/claude-skills/skills/funnel-check/SKILL.md` (frontmatter 포함, [Ohouse-product-design/AI-Skill](https://github.com/Ohouse-product-design/AI-Skill/tree/main/skills/funnel-check)) |
+| 개인 슬래시 커맨드 | `~/.claude/commands/funnel-check.md` (yohan 로컬용) |
+| 호출 | 자동 발동 ("이 화면 사용도 분석") 또는 `/funnel-check [...]` |
 | 목적 | PD가 PO와 차별화된 데이터 인사이트로 화면에 "넣기만" 하지 않고 사용도 낮은 element를 **뺄 수** 있게 돕는 측정 만능 스킬 |
-| 버전 | **v1.2** (audit mode 추가) |
+| 버전 | **v1.2.1** (Step -1 환경 점검 + 팀 패키지화) |
 | 최초 작성 | 2026-04-10 |
 | 마지막 갱신 | 2026-04-10 |
 
@@ -89,9 +90,35 @@
 
 ## 파일 구조
 
-```
-~/.claude/commands/funnel-check.md    ← 스킬 본체
+### 스킬 본체 (Ohouse-product-design/AI-Skill 레포)
 
+```
+~/claude-skills/                                     ← 권장 clone 위치
+├── skills/funnel-check/                             ← 안정 (팀 설치용)
+│   ├── SKILL.md                                     ← frontmatter + 본문
+│   ├── cursor.yaml
+│   └── README.md                                    ← 설치 가이드 + 트러블슈팅
+├── skills/log-explore/                              ← 의존 스킬
+│   ├── SKILL.md, cursor.yaml, README.md
+├── skills/log-query/
+│   ├── SKILL.md, cursor.yaml, README.md
+├── skills/log-spec/
+│   ├── SKILL.md, cursor.yaml, README.md
+└── [YH] Data-insight/funnel-check/                  ← yohan WIP namespace
+    ├── SKILL.md                                     ← 작업 사본 (안정화 후 promotion)
+    └── README.md                                    ← WIP 안내
+```
+
+### 개인 슬래시 커맨드 (yohan 로컬)
+
+```
+~/.claude/commands/funnel-check.md                   ← 슬래시 커맨드용 사본
+~/.claude/commands/log-explore.md, log-query.md, log-spec.md
+```
+
+### 산출물 (스킬 호출 시 호출 디렉토리에 생성)
+
+```
 ./flows/                              ← flow mode 산출물
   ├── {플로우명}.md
   └── {플로우명}.html
@@ -192,6 +219,27 @@
 - audit mode가 특정 product_id 기반 분석이 필요한 경우 보조 그라운딩 소스로 활용 가능
 - 메모리: `ut_prototype_data_reference.md`
 
+### 2026-04-10 v1.2.1 환경 점검 + 팀 패키지화
+
+**⑯ Step -1 환경 점검 추가 (의존성 누락 시 친절한 안내)**
+- 동기: 동료가 처음 받아 쓸 때 막연한 "tool not found" 에러 대신 명확한 설치 안내가 필요
+- 동작: 스킬 호출 직후 자동으로 의존 스킬(log-explore/query/spec)을 Glob으로 확인하고 빠진 게 있으면 두 가지 설치 방법(CLAUDE.md skill path / 슬래시 커맨드)을 보여줌
+- MCP는 사전 검사 없이 실제 호출 시점에 시도하고, 실패하면 친절 메시지로 변환
+
+**⑰ 팀 패키지화: Ohouse-product-design/AI-Skill 레포에 등록**
+- 동기: 동료가 funnel-check을 쓰려면 funnel-check.md + log-* 3개 + MCP 설정이 모두 필요한데, 이 4개 스킬을 한 번에 받을 수 있어야 함
+- 결정: AI-Skill 레포의 기존 컨벤션(`skills/{name}/SKILL.md` + `cursor.yaml`)을 따름. yohan 개인 슬래시 커맨드 형식과는 별도로, 팀 공용 사본은 frontmatter를 추가해 자동 발동도 지원
+- 두 설치 방식:
+  - 옵션 1 (권장): CLAUDE.md skill path 등록 → 자연어로 자동 발동
+  - 옵션 2: `~/.claude/commands/`에 복사 → 슬래시 커맨드 호출
+- frontmatter description은 description matching의 정확도를 위해 트리거 키워드를 명시
+- yohan WIP는 `[YH] Data-insight/funnel-check/`, 안정화 후 `skills/funnel-check/`로 promotion
+
+**⑱ Path 컨벤션 통일: `~/claude-skills` (AI-Skill 레포 README와 일치)**
+- AI-Skill 레포 README가 clone을 `~/claude-skills`로 권장함
+- funnel-check Step -1의 설치 안내도 같은 path를 사용하도록 통일
+- 실제 yohan 로컬 clone은 `/Users/yohan.lee/Desktop/Claude_Study/AI-Skill`이지만, 동료에게 안내하는 권장 path는 `~/claude-skills`
+
 ## 알려진 제한 / 미해결 질문
 
 - **세그먼트 미지원**: v2에서 해결 예정. 선결 과제는 `ba_preserved.user_seg_rfd_v2` 스키마 확인.
@@ -251,3 +299,4 @@
 | 2026-04-10 | v1 | 최초 스킬 작성 (MVP: 세그먼트 제외, flow mode only) |
 | 2026-04-10 | v1.1 | 플로우명 규칙 추가 (`{domain}-{from}-to-{to}`) |
 | 2026-04-10 | v1.2 | **audit mode 추가**. Mode 개념 도입, 화면 단위 element 사용도 분석, ANDROID/IOS 분리, page health metric, 인터랙티브 Figma mapper, `./screens/` 산출물 폴더 |
+| 2026-04-10 | v1.2.1 | **Step -1 환경 점검 + 팀 패키지화**. 의존 스킬(log-*) 자동 감지 및 설치 안내. Ohouse-product-design/AI-Skill 레포에 frontmatter 포함 SKILL.md + cursor.yaml + README.md 형태로 등록. 두 설치 방식(CLAUDE.md skill path / 슬래시 커맨드) 지원. clone path 컨벤션을 `~/claude-skills`로 통일 |
