@@ -46,7 +46,7 @@ description: >
    - 워크플로우 옵션은 [디폴트 값](#디폴트-값) 섹션을 따라 자동 적용. 사용자가 결과를 본 뒤 "기간 다시", "컷오프 20으로", "명세 only도 포함"이라고 말하면 즉시 재실행.
    - **관련 질문은 한 번에 묶어서 묻는다.** 맥락 수집(도메인/목적/측정기간)은 한 메시지에 한꺼번에, 비어 있으면 디폴트로 채워서 진행.
 2. **자의적 추론 금지 — 단, 데이터 의미 결정에 한정.** 페이지 연결, element 분류, 카테고리 분류, trigger 확정 같은 **데이터 의미** 는 후보만 제시하고 사용자가 확정한다. 워크플로우 옵션(컷오프, 측정 기간, 인벤토리 범위)은 디폴트 자동 적용 + 사후 조정.
-3. **Athena 쿼리는 전문을 보여주고 승인받은 뒤 실행.** 쿼리는 정답지다. 여러 쿼리는 한 번에 모아서 한 번의 yes/no로 묶는다. 가능하면 통합 CTE 1개로 합쳐서 풀스캔 횟수를 줄인다.
+3. **Athena 쿼리는 전문을 보여주고 승인받은 뒤 실행.** 쿼리는 정답지다. **여러 쿼리를 만들지 말고 한 쿼리에 통합**한다 — per-page 루틴은 **단일 source CTE + ROLLUP(platform)** 기반 **1개 쿼리**로 element 집계(impression/click) + page 집계(pv/scroll) + ANDROID/IOS/ALL 플랫폼 rollup을 한 번에 처리한다. 같은 테이블을 CTE 여러 개에 나눠 각각 스캔하면 Trino optimizer 의존도가 높아지고 비용이 튄다. flow scope의 funnel 쿼리는 별도이므로 element 통합 쿼리와 한 번에 모아 한 번의 yes/no로 승인받는다.
 4. **로그센터 명세와 교차검증.** `mcp__log-center-mcp__get_page_spec`이 있는 page_id는 항상 명세를 같이 본다. 명세에 없는 object는 경고.
 5. **Element는 반드시 "삼중 표기"로 보여준다.** 어느 단계에서든 사용자에게 element를 노출할 때는 **`{title} (object_section_id, object_type)`** 형태로 세 필드를 함께 보여준다. `cart_button (BUTTON)` 처럼 ID만 보여주는 건 금지 — PD가 어느 요소인지 즉시 알 수 없다. title은 로그센터 명세(log-center mcp)의 한국어 title 필드에서 그대로 가져온다. 명세에 title이 없으면 `{title 없음}` 로 표시하고 사용자에게 명세 정비가 필요하다고 안내. 자세한 표기 규칙은 아래 [Element 표기 규칙](#element-표기-규칙) 참고.
 6. **MD가 정본, HTML은 매번 재생성.** 모든 산출물의 정본은 MD 파일이고, HTML은 MD가 갱신될 때마다 자동 재생성한다.
@@ -59,20 +59,23 @@ description: >
 
 | 옵션 | 디폴트 | 이유 |
 |------|--------|------|
-| 측정 기간 | **최근 30일** | 7일은 표본 노이즈가 큼. 30일이 element 사용도 안정적 측정에 적합 |
+| 측정 기간 | **최근 14일** | 주간 변동 1사이클 + 주요 element 표본 안정. 30일은 스캔 비용이 2배인데 증분 정합성 이득 작음. 롱테일 element가 필요하면 사용자가 명시 확장 |
 | 분석 목적 | "유저 행동 패턴 파악" | 사용자가 안 적으면 자동 채움 |
 | 그라운딩 파티션 | **어제(date - 1일) 우선** | 당일 파티션 인입 지연이 잦음 |
 | 인벤토리 범위 | **명세 ∩ 로그 + 로그 only** (uv ≥ 1) | 명세 only는 별도 표로 분리 (디폴트 분석 대상 아님) |
 | 명세 only 처리 | **별도 표로 분리** | 명세 정비 이슈로 노출, 자동 제외 X |
-| 컷오프 N (인벤토리) | **상위 16개** | 차트/표 가독성 + 핵심 파악 균형 |
+| 컷오프 N (결과 표시) | **상위 16개** | 차트/표 가독성 + 핵심 파악 균형 |
+| **`object_section_idx` 스캔 컷오프** | **`< 10`** | 스크롤 안 한 유저가 보지 못한 하단 element를 IR 분모에서 제거 → 정합성 개선. **결과 컷오프와 달리 스캔 단계**에서 적용돼서 비용도 줄어. 3으로 좁히면 "첫 화면만", null은 전체. 사용자가 "전체 idx로" 요청 시 조건 제거 |
 | 정렬 기준 | 통합(ALL) click_per_pv 내림차순 | element 랭킹의 single source of truth |
 | 플랫폼 | ANDROID + IOS 통합 메인, 분리는 보조 | 통합이 의사결정 기준선 |
 | Athena `user_id > 0` | 항상 적용 | 비회원 제외 |
 | Athena `platform IN ('IOS','ANDROID')` | 항상 적용 | 앱 한정 |
 
+**비용 원칙** — Athena 스캔은 기간 × 컬럼 수 × 이벤트 카테고리 수로 선형 증가하고 반복 호출될수록 누적된다. 디폴트는 **"정합성을 확보할 수 있는 최소 스캔"** 기준으로 잡는다. 기간 확장, idx 컷오프 해제, engagement 카테고리 확장 같은 옵션은 사용자가 명시 요청할 때만 적용한다.
+
 **사후 조정 안내 (Step 5 끝에 한 줄):**
 ```
-범위/컷오프/기간 변경하려면 "N=20으로", "기간 14일로", "명세 only도 포함" 처럼 말해줘.
+범위/컷오프/기간 변경하려면 "기간 30일로", "N=20으로", "idx 3까지만", "전체 idx", "명세 only도 포함" 처럼 말해줘.
 ```
 
 이 안내는 쿼리 실행 전 매번 묻지 않기 위한 것. 사용자가 안내를 보고 사후 정정하면 그때 변경.
@@ -915,87 +918,72 @@ SELECT object_section_id,
 
 **announce 후 즉시 다음 단계로**. 사용자 답변을 기다리지 않는다. 사용자가 다음 메시지에 정정 지시를 주면 그때 인벤토리 수정 후 쿼리 재실행. 확정된 인벤토리는 `## 3. Element 인벤토리`에 기록 — title 함께 기록.
 
-### Step 4-B: Athena 쿼리 (Element CTR + Page Health)
+### Step 4-B: Athena 통합 쿼리 (Element CTR + Page Health 한 번에)
 
-per-page 루틴은 두 종류의 쿼리를 만든다 (Element CTR + Page Health). flow scope면 page_id마다 이 두 쿼리가 생성된다 (총 N×2개) — Step 4-A의 funnel 쿼리와 함께 한 번에 모아 한 번의 yes/no로 승인.
+per-page 루틴은 **단일 통합 쿼리 1개**만 만든다 (v1.5.2부터). 과거엔 Element CTR 쿼리와 Page Health 쿼리가 분리돼 있었고 각각 여러 CTE가 원본 테이블을 각자 스캔해서 실질 스캔이 4~8회로 늘어났는데, 이번 버전에서 `src` CTE 1개 + `ROLLUP(platform)` 으로 **테이블 접근을 1회로 고정**한다. flow scope의 funnel 쿼리가 있는 경우 그것만 별도이고, element 통합 쿼리와 한 번의 yes/no로 같이 승인받는다.
 
-#### 4-B-1. Element CTR / IR 쿼리 (통합 인벤토리 + CTR, page_id별)
+#### 4-B-1. 통합 쿼리 (Element metrics + Page Health, page_id별)
 
-**중요**: 이 쿼리 1개로 (a) element 인벤토리 (b) PV UV (c) CTR/IR/click_per_pv 를 한 번에 산출해서 풀스캔 1회로 끝낸다 (Step 3-B-2 별도 인벤토리 쿼리는 더 이상 만들지 않음).
+**이 쿼리 1개가 반환하는 것:**
+- **per-element 지표**: `impression_uv`, `click_uv`, `click_sessions`, `ctr`, `ir`, `click_per_pv`, `click_per_session`
+- **per-page 지표**: `pv_uv`, `pv_sessions`, `scroll_uv`, `scroll_rate`
+- **플랫폼 축**: ANDROID / IOS / **ALL** (ROLLUP으로 한 쿼리에서 산출)
 
-쿼리는 ANDROID/IOS 분리 행 + **통합(`ALL`) 행을 함께 출력**한다. HTML에서 통합이 메인 뷰가 되고, 플랫폼별은 보조 뷰로 토글한다. 분석 대상 element는 **사전에 명세 + 로그 양쪽에서 후보 리스트를 얻은 뒤 IN clause로 한정**한다 (안 그러면 명세 only/로그 only 분류 불가).
+분석 대상 element는 사전에 명세 + 로그 양쪽에서 후보 리스트를 얻은 뒤 IN clause로 한정한다 (안 그러면 명세 only/로그 only 분류 불가).
 
 ```sql
-WITH page_uv AS (
+WITH src AS (
   SELECT platform,
-         COUNT(DISTINCT user_id) AS pv_uv
+         user_id,
+         session_id,
+         category,
+         object_section_id,
+         object_type
     FROM log.analyst_log_table
    WHERE date BETWEEN '{시작일}' AND '{종료일}'
      AND page_id = '{page_id}'
-     AND category = 'PAGEVIEW'
      AND user_id > 0
      AND platform IN ('IOS', 'ANDROID')
-   GROUP BY 1
+     AND category IN ('PAGEVIEW', 'IMPRESSION', 'CLICK', 'SCROLL')
+     AND (object_section_idx IS NULL
+          OR TRY_CAST(object_section_idx AS BIGINT) < {idx_cutoff})
 ),
-page_uv_all AS (
-  SELECT 'ALL' AS platform,
-         COUNT(DISTINCT user_id) AS pv_uv
-    FROM log.analyst_log_table
-   WHERE date BETWEEN '{시작일}' AND '{종료일}'
-     AND page_id = '{page_id}'
-     AND category = 'PAGEVIEW'
-     AND user_id > 0
-     AND platform IN ('IOS', 'ANDROID')
+page_rollup AS (
+  SELECT COALESCE(platform, 'ALL') AS platform,
+         COUNT(DISTINCT CASE WHEN category = 'PAGEVIEW' THEN user_id END)    AS pv_uv,
+         COUNT(DISTINCT CASE WHEN category = 'PAGEVIEW' THEN session_id END) AS pv_sessions,
+         COUNT(DISTINCT CASE WHEN category = 'SCROLL'   THEN user_id END)    AS scroll_uv
+    FROM src
+   GROUP BY ROLLUP(platform)
 ),
-element_metrics AS (
-  SELECT platform,
+em_rollup AS (
+  SELECT COALESCE(platform, 'ALL') AS platform,
          object_section_id,
          object_type,
-         COUNT(DISTINCT CASE WHEN category = 'IMPRESSION' THEN user_id END) AS impression_uv,
-         COUNT(DISTINCT CASE WHEN category = 'CLICK' THEN user_id END) AS click_uv
-    FROM log.analyst_log_table
-   WHERE date BETWEEN '{시작일}' AND '{종료일}'
-     AND page_id = '{page_id}'
-     AND user_id > 0
-     AND platform IN ('IOS', 'ANDROID')
-     AND object_section_id IN ({분석_대상_리스트})
-   GROUP BY 1, 2, 3
-),
-element_metrics_all AS (
-  SELECT 'ALL' AS platform,
-         object_section_id,
-         object_type,
-         COUNT(DISTINCT CASE WHEN category = 'IMPRESSION' THEN user_id END) AS impression_uv,
-         COUNT(DISTINCT CASE WHEN category = 'CLICK' THEN user_id END) AS click_uv
-    FROM log.analyst_log_table
-   WHERE date BETWEEN '{시작일}' AND '{종료일}'
-     AND page_id = '{page_id}'
-     AND user_id > 0
-     AND platform IN ('IOS', 'ANDROID')
-     AND object_section_id IN ({분석_대상_리스트})
-   GROUP BY 1, 2, 3
-),
-combined_elements AS (
-  SELECT * FROM element_metrics
-  UNION ALL
-  SELECT * FROM element_metrics_all
-),
-combined_pv AS (
-  SELECT * FROM page_uv
-  UNION ALL
-  SELECT * FROM page_uv_all
+         COUNT(DISTINCT CASE WHEN category = 'IMPRESSION' THEN user_id END)    AS impression_uv,
+         COUNT(DISTINCT CASE WHEN category = 'CLICK'      THEN user_id END)    AS click_uv,
+         COUNT(DISTINCT CASE WHEN category = 'CLICK'      THEN session_id END) AS click_sessions
+    FROM src
+   WHERE object_section_id IN ({분석_대상_리스트})
+   GROUP BY ROLLUP(platform), object_section_id, object_type
 )
 SELECT e.platform,
        e.object_section_id,
        e.object_type,
        e.impression_uv,
        e.click_uv,
+       e.click_sessions,
        p.pv_uv,
-       CAST(e.click_uv AS DOUBLE) / NULLIF(e.impression_uv, 0) AS ctr,
-       CAST(e.impression_uv AS DOUBLE) / NULLIF(p.pv_uv, 0) AS ir,
-       CAST(e.click_uv AS DOUBLE) / NULLIF(p.pv_uv, 0) AS click_per_pv
-  FROM combined_elements e
-  JOIN combined_pv p ON e.platform = p.platform
+       p.pv_sessions,
+       p.scroll_uv,
+       CAST(e.click_uv       AS DOUBLE) / NULLIF(e.impression_uv, 0) AS ctr,
+       CAST(e.impression_uv  AS DOUBLE) / NULLIF(p.pv_uv, 0)         AS ir,
+       CAST(e.click_uv       AS DOUBLE) / NULLIF(p.pv_uv, 0)         AS click_per_pv,
+       CAST(e.click_sessions AS DOUBLE) / NULLIF(p.pv_sessions, 0)   AS click_per_session,
+       CAST(p.scroll_uv      AS DOUBLE) / NULLIF(p.pv_uv, 0)         AS scroll_rate
+  FROM em_rollup e
+  JOIN page_rollup p USING (platform)
+ WHERE e.object_section_id IS NOT NULL
  ORDER BY (CASE e.platform WHEN 'ALL' THEN 0 WHEN 'ANDROID' THEN 1 ELSE 2 END),
           click_per_pv DESC
 ;
@@ -1005,107 +993,56 @@ SELECT e.platform,
 - **IR (Impression Rate)** = 노출 UV / 페이지 PV UV — element가 얼마나 보였나
 - **CTR** = 클릭 UV / 노출 UV — 보인 사람 중 누른 비율
 - **click_per_pv** = 클릭 UV / 페이지 PV UV — 페이지 진입자 중 결국 누른 비율. **디자인 의사결정의 메인 기준선이자 element 랭킹의 기본 정렬키**.
+- **click_per_session** = 클릭 session 수 / PV session 수 — session 단위 사용 빈도. 같은 유저가 여러 session에 걸쳐 반복 클릭하는지 보조 신호.
+- **scroll_rate** = SCROLL UV / PAGEVIEW UV — 페이지 진입자 중 스크롤 한 번이라도 한 비율.
 
-**플랫폼 처리:**
-- `ALL` 행: ANDROID + IOS 합산 UV로 계산. **HTML의 메인 뷰이자 랭킹 기준**.
-- `ANDROID` / `IOS` 행: 보조 뷰. 플랫폼 간 차이를 보고 싶을 때 토글.
-- `ALL` 의 UV는 합산이 아닌 unique distinct user count (한 유저가 두 OS 쓰는 케이스 dedup) — 그래서 별도 CTE로 다시 계산.
+**플랫폼 처리 (ROLLUP):**
+- `GROUP BY ROLLUP(platform), ...` 가 per-platform 행과 NULL platform 행(ALL) 을 **한 번의 집계**로 산출. `COALESCE(platform, 'ALL')` 로 라벨링.
+- `ALL` 의 UV/session 수는 합산이 아닌 unique distinct count (한 유저가 두 OS 쓰는 케이스 dedup) — ROLLUP 동작이 정확히 이것을 보장.
+- `ALL` 이 HTML의 메인 뷰이자 랭킹 기준, `ANDROID` / `IOS` 는 보조 뷰.
 
-#### 4-B-2. Page Health 쿼리 (스크롤률 + 평균 체류시간)
+**`object_section_idx` 스캔 컷오프 (v1.5.2 신설):**
+- `src` CTE의 WHERE 에 `object_section_idx < {idx_cutoff}` 조건이 들어간다 (기본 10).
+- 스크롤 안 한 유저에게 로딩조차 안 된 하단 element가 IR 분모/분자에 섞여들지 않게 함 → **정합성 개선**.
+- 또한 스캔 bytes에 영향 (Parquet row group 통계가 잘 잡혀 있으면 pruning).
+- 사용자가 "전체 idx로" 요청하면 이 조건만 제거, "첫 화면만" 요청하면 `< 3` 으로 조정.
 
-먼저 SCROLL 카테고리가 존재하는지 `log-explore`로 확인. 존재하면:
+**SCROLL 카테고리가 없는 page_id인 경우:**
+- `scroll_uv` / `scroll_rate` 가 0 으로 나온다 (쿼리 자체는 에러 없이 돈다).
+- Step 5 결과 표시 시 사용자에게 한 줄 안내 — "이 page_id는 SCROLL 로그가 없어서 scroll_rate는 0이야. 명세 정비가 필요하면 log-center에서 확인해줘."
 
-```sql
-WITH visits AS (
-  SELECT user_id, platform, server_access_time
-    FROM log.analyst_log_table
-   WHERE date BETWEEN '{시작일}' AND '{종료일}'
-     AND page_id = '{page_id}'
-     AND category = 'PAGEVIEW'
-     AND user_id > 0
-     AND platform IN ('IOS', 'ANDROID')
-),
-scrolls AS (
-  SELECT DISTINCT user_id, platform
-    FROM log.analyst_log_table
-   WHERE date BETWEEN '{시작일}' AND '{종료일}'
-     AND page_id = '{page_id}'
-     AND category = 'SCROLL'
-     AND user_id > 0
-     AND platform IN ('IOS', 'ANDROID')
-),
-dwell AS (
-  SELECT user_id, platform,
-         server_access_time AS pv_time,
-         LEAD(server_access_time) OVER (
-           PARTITION BY user_id ORDER BY server_access_time
-         ) AS next_event_time
-    FROM log.analyst_log_table
-   WHERE date BETWEEN '{시작일}' AND '{종료일}'
-     AND user_id > 0
-     AND platform IN ('IOS', 'ANDROID')
-     -- 같은 user의 모든 이벤트로 다음 이벤트 시각 구함
-)
-SELECT v.platform,
-       COUNT(DISTINCT v.user_id) AS pv_uv,
-       COUNT(DISTINCT s.user_id) AS scroll_uv,
-       CAST(COUNT(DISTINCT s.user_id) AS DOUBLE) / NULLIF(COUNT(DISTINCT v.user_id), 0) AS scroll_rate,
-       AVG(CASE
-             WHEN d.next_event_time IS NOT NULL
-              AND DATE_DIFF('second', d.pv_time, d.next_event_time) BETWEEN 1 AND 600
-             THEN DATE_DIFF('second', d.pv_time, d.next_event_time)
-           END) AS avg_dwell_seconds
-  FROM visits v
-  LEFT JOIN scrolls s ON v.user_id = s.user_id AND v.platform = s.platform
-  LEFT JOIN dwell d ON v.user_id = d.user_id AND v.platform = d.platform
-                    AND v.server_access_time = d.pv_time
- GROUP BY v.platform
+**v1.5.2 설계 결정 (dwell 제거):**
+- 이전 버전에 있던 `avg_dwell_seconds` 는 `log.analyst_log_table` 에 duration 컬럼이 없어서 LEAD 윈도우로 계산했는데, 이 계산은 **해당 기간 전체 유저의 모든 이벤트**를 필요로 해서 비용 대비 정합성 이득이 작았음. v1.5.2 에서 제거. click_per_pv + scroll_rate + click_per_session 조합으로 engagement 신호는 충분히 표현 가능.
+- 사용자가 "체류시간도 보고 싶어"라고 명시 요청 시에만 별도 옵션으로 dwell 쿼리를 추가 작성 (기본 워크플로우는 아님).
 
-UNION ALL
+#### 4-B-2. 사용자 승인 & 실행
 
-SELECT 'ALL' AS platform,
-       COUNT(DISTINCT v.user_id) AS pv_uv,
-       COUNT(DISTINCT s.user_id) AS scroll_uv,
-       CAST(COUNT(DISTINCT s.user_id) AS DOUBLE) / NULLIF(COUNT(DISTINCT v.user_id), 0) AS scroll_rate,
-       AVG(CASE
-             WHEN d.next_event_time IS NOT NULL
-              AND DATE_DIFF('second', d.pv_time, d.next_event_time) BETWEEN 1 AND 600
-             THEN DATE_DIFF('second', d.pv_time, d.next_event_time)
-           END) AS avg_dwell_seconds
-  FROM visits v
-  LEFT JOIN scrolls s ON v.user_id = s.user_id AND v.platform = s.platform
-  LEFT JOIN dwell d ON v.user_id = d.user_id AND v.platform = d.platform
-                    AND v.server_access_time = d.pv_time
-
- ORDER BY (CASE platform WHEN 'ALL' THEN 0 WHEN 'ANDROID' THEN 1 ELSE 2 END)
-;
-```
-
-**SCROLL 카테고리가 없으면**: `scroll_rate` 컬럼은 빼고 dwell time만 계산. 사용자에게 알린다 — "SCROLL 로그가 명세에 없어 스크롤률은 측정 불가. dwell time만 보여줄게."
-
-**핵심 지표:**
-- **scroll_rate** = SCROLL UV / PAGEVIEW UV — 페이지 진입자 중 스크롤 한 번이라도 한 비율
-- **avg_dwell_seconds** = 페이지 PV → 다음 이벤트까지 평균 시간 (1초 미만, 10분 초과는 outlier로 제외)
-
-#### 4-B-3. 사용자 승인 & 실행 (한 번에 묶어서)
-두 쿼리 전문을 한 번에 보여주고 **한 번의 yes/no**로 승인:
+통합 쿼리 전문 1개를 보여주고 **한 번의 yes/no**로 승인:
 
 ```
-이 두 쿼리 실행할게. 진행할까? (y / n)
+이 통합 쿼리 실행할게. 진행할까? (y / n)
 
-[1] Element CTR / IR
+[통합 쿼리 — element metrics + page health, ROLLUP per-platform]
 [쿼리 전문]
-...
-
-[2] Page Health
-[쿼리 전문]
-...
 ```
 
-`y` 면 두 쿼리를 순서대로 `mcp__ohouse-athena-mcp__execute_athena_query` 로 실행.
+flow scope 이면 Step 4-A 의 funnel 쿼리도 같이 묶어서 보여준다:
 
-#### 4-B-4. 결과 기록
-MD `## 4. 쿼리 결과` 섹션에 두 쿼리 전문 + 결과 표 + 실행 일시 기록 → HTML 재생성.
+```
+이 쿼리들 실행할게. 진행할까? (y / n)
+
+[1] Flow funnel (page_id 시퀀스 간 전환률)
+[쿼리 전문]
+
+[2] 각 page_id 통합 쿼리 (element + page health)
+[쿼리 전문 N개 — 각 page_id당 1개, 모양은 동일]
+```
+
+`y` 면 순서대로 `mcp__ohouse-athena-mcp__execute_athena_query` 로 실행. **Step 4-A 의 funnel 쿼리와 per-page 통합 쿼리를 여러 개로 쪼개지 말 것** — 한 번의 yes/no 로 묶는다.
+
+#### 4-B-3. 결과 기록
+
+MD `## 4. 쿼리 결과` 섹션에 통합 쿼리 전문 + 결과 표 + 실행 일시 기록 → HTML 재생성.
 
 ### Step 5-B: per-page HTML 시각화
 
@@ -1408,30 +1345,29 @@ per-page HTML 섹션 구조 (위에서 아래 순서로 렌더):
 ### ⚡ 로그 only (명세 정비 필요)
 - {title 없음} (exp_recommendation_v3, MODULE)
 
-## 4. 쿼리 결과
-### 4-1. Element CTR / IR (실행: {YYYY-MM-DD HH:MM})
-실행 쿼리:
+## 4. 쿼리 결과 (통합 쿼리 1개, v1.5.2)
+실행 쿼리 (element metrics + page health, ROLLUP per-platform):
 ```sql
--- 쿼리 전문
+-- 통합 쿼리 전문
 ```
-| platform | title | object_section_id | object_type | impression_uv | click_uv | IR | CTR | click/PV |
-|----------|-------|-------------------|-------------|---------------|----------|-----|-----|----------|
-| **ALL**  | **장바구니 담기 버튼** | **cart_button** | **BUTTON** | **...** | **...** | **...** | **...** | **...** |
-| ANDROID  | 장바구니 담기 버튼 | cart_button | BUTTON | ... | ... | ... | ... | ... |
-| IOS      | 장바구니 담기 버튼 | cart_button | BUTTON | ... | ... | ... | ... | ... |
 
-(ALL 행은 통합 지표. element 랭킹은 ALL.click/PV 내림차순.)
+**4-1. Per-element × per-platform 지표 (실행: {YYYY-MM-DD HH:MM})**
+| platform | title | object_section_id | object_type | impression_uv | click_uv | click_sessions | IR | CTR | click/PV | click/session |
+|----------|-------|-------------------|-------------|---------------|----------|----------------|-----|-----|----------|---------------|
+| **ALL**  | **장바구니 담기 버튼** | **cart_button** | **BUTTON** | **...** | **...** | **...** | **...** | **...** | **...** | **...** |
+| ANDROID  | 장바구니 담기 버튼 | cart_button | BUTTON | ... | ... | ... | ... | ... | ... | ... |
+| IOS      | 장바구니 담기 버튼 | cart_button | BUTTON | ... | ... | ... | ... | ... | ... | ... |
 
-### 4-2. Page Health (실행: {YYYY-MM-DD HH:MM})
-실행 쿼리:
-```sql
--- 쿼리 전문
-```
-| platform | pv_uv | scroll_rate | avg_dwell_seconds |
-|----------|-------|-------------|-------------------|
-| **ALL** | **...** | **...** | **...** |
-| ANDROID  | ...   | ...         | ...               |
-| IOS      | ...   | ...         | ...               |
+(ALL 행은 통합 지표. element 랭킹은 ALL.click_per_pv 내림차순.)
+
+**4-2. Per-platform page health (같은 쿼리에서 JOIN으로 붙음)**
+| platform | pv_uv | pv_sessions | scroll_uv | scroll_rate |
+|----------|-------|-------------|-----------|-------------|
+| **ALL** | **...** | **...** | **...** | **...** |
+| ANDROID  | ...   | ...         | ...       | ...         |
+| IOS      | ...   | ...         | ...       | ...         |
+
+(v1.5.2: `avg_dwell_seconds` 제거. `log.analyst_log_table` 에 duration 컬럼이 없고 LEAD 기반 계산이 전체 유저 이벤트 스캔을 필요로 해서 비용 대비 정합성 이득이 작음 — click_per_pv + scroll_rate + click_per_session 조합으로 engagement 신호 충분히 표현됨.)
 
 ## 5. Element 클릭률 랭킹 — 하위 구간 참고표
 | title | object_section_id | object_type | **통합 click/PV** | ANDROID | IOS | 명세 |
@@ -1484,6 +1420,8 @@ per-page HTML 섹션 구조 (위에서 아래 순서로 렌더):
 
 - **자의적 추론 금지.** 페이지 연결, element 분류, 카테고리 분류 — 모두 사용자 확정 필요. 자동은 정규화/대조까지만.
 - **쿼리는 승인 전 실행 금지.** 전문을 보여주고 "실행할까?" 명시 확인.
+- **쿼리는 통합 1개가 원칙.** per-page 루틴은 element + page health 를 `src` CTE 1개 + ROLLUP(platform) 으로 한 번의 스캔에 처리. 같은 테이블을 CTE 여러 개에 나눠 각자 WHERE를 복제하지 말 것 — Trino optimizer 의존도와 비용이 모두 올라간다.
+- **비용 원칙.** Athena 스캔은 기간 × 컬럼 수 × 카테고리 수로 선형 증가하고 반복 호출될수록 누적된다. 디폴트는 "정합성을 확보할 수 있는 최소 스캔"을 기준선으로 잡고, 기간 확장 / idx 컷오프 해제 / engagement 카테고리 확장 / dwell 도입 같은 비용을 키우는 옵션은 사용자가 명시 요청할 때만 적용.
 - **명세 교차검증 필수.** `get_page_spec`이 있는 page_id는 반드시 명세와 실로그 대조.
 - **파티션 필수.** `date` 필터 없는 쿼리 금지 (비용).
 - **비회원 제외.** `user_id > 0` 필수.
