@@ -902,7 +902,7 @@
       <div class="phase-label">
         <div class="phase-number cat-design">2</div>
         <h2>Design & Prototype</h2>
-        <span class="phase-desc">DS 기반 생성 &rarr; 상태 검토 & Figma 정제</span>
+        <span class="phase-desc">DS 기반 생성 &rarr; 시나리오 시뮬레이션 & Figma 정제</span>
       </div>
 
       <!-- Group A: Design system 기반 생성 -->
@@ -936,21 +936,21 @@
 
       </div>
 
-      <!-- Group B: 상태 검토 & Figma 정제 -->
-      <div class="group-header" style="background: linear-gradient(135deg, #A259FF, #7C3AED); margin-top:20px;">상태 검토 & Figma 정제</div>
+      <!-- Group B: 시나리오 시뮬레이션 & Figma 정제 -->
+      <div class="group-header" style="background: linear-gradient(135deg, #A259FF, #7C3AED); margin-top:20px;">시나리오 시뮬레이션 & Figma 정제</div>
       <div class="workflow-grid" style="grid-template-columns: repeat(2, 1fr);">
 
-        <div class="card" data-id="State-edge-simulator" data-has-case="true" style="border-left: 3px solid #7C3AED;">
+        <div class="card" data-id="PRD-scenario-simulator" data-has-case="true" style="border-left: 3px solid #7C3AED;">
           <div class="card-meta">
             <span class="tier-badge p0">P0</span>
             <span class="case-badge">★ 사례</span>
           </div>
-          <div class="card-title">State-edge-simulator</div>
-          <div class="card-desc">화면 설명 입력 &rarr; Loading/Empty/Error 상태 누락 자동 탐지 + 빈값&middot;최대 길이&middot;특수문자 등 엣지 케이스 데이터 자동 생성. 혼자 놓치기 쉬운 케이스를 선제 커버.</div>
+          <div class="card-title">PRD-scenario-simulator</div>
+          <div class="card-desc">PRD 업로드 &rarr; 커머스 정책(등급/프로모션/재고/결제/배송)과 유저 상황(신규/재방문/주문이력 등) 조합별 화면을 자동 시각화. 정책을 빠르게 가시화해 설계 공백을 선제 커버.</div>
           <div class="card-tags">
-            <span class="tag tag-skill">Skill &middot; 상태 체크리스트</span>
-            <span class="tag tag-skill">Skill &middot; 엣지 케이스 생성</span>
-            <span class="tag tag-figma">기존 도구 &middot; Content Reel</span>
+            <span class="tag tag-skill">Skill &middot; PRD 파서</span>
+            <span class="tag tag-skill">Skill &middot; 시나리오 조합 생성</span>
+            <span class="tag tag-figma">기존 도구 &middot; Figma Variables</span>
           </div>
         </div>
 
@@ -1239,7 +1239,7 @@
             <td><div class="owner-picker"><div class="owner-display">할당 대기</div><div class="owner-dropdown"></div></div></td>
           </tr>
           <tr>
-            <td><strong>State-edge-simulator</strong></td>
+            <td><strong>PRD-scenario-simulator</strong></td>
             <td><span class="tag tag-skill">Skill</span> <span class="tag tag-figma">기존 도구</span></td>
             <td><span class="tier-badge p0">P0</span></td>
             <td>
@@ -1249,7 +1249,7 @@
               </div>
             </td>
             <td>2~3주</td>
-            <td>상태 체크리스트 및 엣지 데이터 시나리오 정의</td>
+            <td>커머스 정책 축·유저 컨텍스트 축 카탈로그, 샘플 PRD 3건</td>
             <td><div class="owner-picker"><div class="owner-display">할당 대기</div><div class="owner-dropdown"></div></div></td>
           </tr>
           <tr>
@@ -1660,41 +1660,43 @@
         { type: "image", src: "cases/Design-critique.png", caption: "팀원 사례: Design-critique 운영 예시" }
       ]
     },
-    "State-edge-simulator": {
+    "PRD-scenario-simulator": {
       tier: "P0",
-      group: "상태 검토 & Figma 정제",
-      goal: "화면 설명 입력 → Loading/Empty/Error 상태 누락 탐지 + 엣지 케이스 데이터 자동 생성을 한 번에",
-      diagnosis: { score: 5, evidence: "상태 UI 누락과 텍스트 오버플로가 개발/QA 단계에서야 발견되는 가장 흔한 핸드오프 문제" },
+      group: "시나리오 시뮬레이션 & Figma 정제",
+      goal: "PRD를 입력하면 커머스 정책과 유저 상황 조합별 화면을 자동 시각화해, 기획 단계의 정책을 즉시 눈으로 검증",
+      diagnosis: { score: 5, evidence: "커머스 화면은 회원 등급·프로모션·재고·결제·배송 등 정책 조건에 따라 수십 가지 분기가 존재하지만, 디자이너가 PRD 텍스트만으로 모든 시나리오를 머릿속으로 열거하기 어려워 설계 공백 발생" },
       problems: [
-        "Loading, Empty, Error, 권한 없음 등 상태별 UI를 빠뜨리고 핸드오프",
-        "빈 값, 최대 길이, 특수문자 등 엣지 케이스 데이터를 사전 검증 못함",
-        "'이 상태 디자인 없는데요?' 추가 요청이 개발 단계에서 반복"
+        "PRD에 쓰인 정책이 화면으로 치환되지 않아 개발/QA 단계에서야 '이 경우는?' 질문 반복",
+        "회원 등급·프로모션·재고·결제수단·배송지역 등 조합별 화면을 매번 수동으로 열거",
+        "신규/재방문/이력 없음 등 유저 컨텍스트별 노출 차이를 설계 시점에 눈으로 확인 불가",
+        "Error/Empty 같은 기술 상태가 아닌 '비즈니스 상황'에 대한 시나리오 도구가 없음"
       ],
       solutionDesign: {
-        v1: "Skill이 화면 컨텍스트 → 필요한 상태 목록 + 엣지 케이스 데이터(빈값/최대길이/특수문자/다국어)를 동시에 생성",
-        v2: "Figma 파일 자동 스캔 → 누락 상태 탐지 + Content Reel로 엣지 데이터 자동 주입"
+        v1: "PRD 파일 업로드 → Skill이 정책 조건 & 유저 컨텍스트를 추출 → 조합별 시나리오 리스트 + 각 시나리오에 맞춘 예상 화면(HTML 프로토타입) 자동 생성",
+        v2: "Figma Variables/Mode 연동으로 한 화면에서 시나리오 토글 시 프로덕트 정책이 즉시 반영"
       },
       howToBuild: [
-        "1. 상태 체크리스트(기본 8~10가지) + 엣지 데이터 시나리오 정의",
-        "2. 두 기능을 하나의 Skill 프롬프트로 통합",
-        "3. Content Reel 연동으로 Figma에 바로 적용",
-        "4. 파일럿 3건(핸드오프 직전 화면)으로 검증",
-        "5. 팀 표준 프로세스에 통합"
+        "1. 커머스 핵심 정책 축(등급/프로모션/재고/결제/배송/쿠폰 등) + 유저 컨텍스트 축(신규/재방문/주문이력/선호카테고리 등) 정의",
+        "2. PRD 파서 Skill 작성 (자연어 정책 → 구조화된 조건 테이블)",
+        "3. 시나리오 조합 생성 Skill 작성 (중요도 상위 N개 자동 선정)",
+        "4. DS-prototype과 연동해 각 시나리오별 HTML 프리뷰 생성",
+        "5. Figma Variables로 정책 토글 UI 구성"
       ],
-      reference: "공디/디어 직접 언급. o2o-pd-ai-workflow-map의 State-verifier + Edge-case-simulator 병합",
+      reference: "기존 State-verifier + Edge-case-simulator의 후속. 기술 상태(Loading/Empty/Error)가 아닌 비즈니스 시나리오로 확장",
       successMetrics: [
-        "상태 누락으로 인한 개발 중 추가 요청 제로화",
-        "텍스트 관련 QA 이슈 50%+ 감소"
+        "PRD 정책을 시각으로 확인하는 데 걸리는 시간: 수일 → 수시간",
+        "핸드오프 후 정책 관련 추가 질문 50%+ 감소",
+        "설계 단계에서 놓치는 정책 조합 제로화"
       ],
-      solutionTypes: ["Skill · 상태 체크리스트", "Skill · 엣지 케이스 생성", "기존 도구 · Content Reel"],
-      prereq: "상태 체크리스트 및 엣지 데이터 시나리오 정의",
+      solutionTypes: ["Skill · PRD 파서", "Skill · 시나리오 조합 생성", "기존 도구 · Figma Variables"],
+      prereq: "커머스 정책 축·유저 컨텍스트 축 카탈로그, 샘플 PRD 3건",
       cases: [
-        { type: "image", src: "cases/State-edge-simulator.gif", caption: "팀원 사례: State-edge-simulator 실행 흐름" }
+        { type: "image", src: "cases/PRD-scenario-simulator.gif", caption: "팀원 사례: PRD 입력 → 시나리오별 화면 시각화" }
       ]
     },
     "HTML-to-Figma-refiner": {
       tier: "P1",
-      group: "상태 검토 & Figma 정제",
+      group: "시나리오 시뮬레이션 & Figma 정제",
       goal: "AI가 만든 HTML 프로토타입을 Figma로 전환해 UI 디테일을 다듬고 핸드오프용 원본으로 정제",
       diagnosis: { score: 4, evidence: "AI 생성 HTML은 빠르지만 타이포/간격/상태 표현 디테일이 부족 → 디자이너의 최종 품질 보증 단계 필요" },
       problems: [
@@ -2082,7 +2084,7 @@
     'Data-interpreter': ['Selah'],
     'DS-prototype': ['Jack','Gongdee','Lana','Tyler'],
     'UT-prototyping': ['Deeer','Stella'],
-    'State-edge-simulator': ['Jenna'],
+    'PRD-scenario-simulator': ['Jenna'],
     'HTML-to-Figma-refiner': ['Tyler'],
     'Design-critique': ['Yohan'],
     'Complete-handoff-doc': ['Deeer'],
