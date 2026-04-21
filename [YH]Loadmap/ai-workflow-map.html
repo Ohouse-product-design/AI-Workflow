@@ -241,6 +241,49 @@
       color: #22A647;
     }
 
+    /* Case badge — 팀원 사례가 있는 카드 */
+    .case-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      background: #FFF4D6;
+      color: #B8860B;
+      border: 1px solid #F1D27A;
+    }
+    .card[data-has-case="true"] {
+      border-top-width: 2px;
+      border-top-style: solid;
+      border-top-color: #F1D27A;
+    }
+
+    /* Case media in modal */
+    .modal-case-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .modal-case-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+    }
+    .modal-case-item img,
+    .modal-case-item video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .modal-case-caption {
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding: 8px 12px;
+      background: var(--surface);
+    }
+
     .card-meta {
       display: flex;
       align-items: center;
@@ -866,9 +909,10 @@
       <div class="group-header" style="background: linear-gradient(135deg, #A259FF, #7C3AED);">Design system 기반 생성</div>
       <div class="workflow-grid" style="grid-template-columns: repeat(2, 1fr);">
 
-        <div class="card" data-id="DS-prototype" style="border-left: 3px solid #7C3AED;">
+        <div class="card" data-id="DS-prototype" data-has-case="true" style="border-left: 3px solid #7C3AED;">
           <div class="card-meta">
             <span class="tier-badge p0">P0</span>
+            <span class="case-badge">★ 사례</span>
           </div>
           <div class="card-title">DS-prototype</div>
           <div class="card-desc">PRD + ODS 컴포넌트 레지스트리 &rarr; Claude Code로 HTML 프로토타입 생성. DS를 준수한 클릭 가능한 결과물.</div>
@@ -896,9 +940,10 @@
       <div class="group-header" style="background: linear-gradient(135deg, #A259FF, #7C3AED); margin-top:20px;">상태 검토 & Figma 정제</div>
       <div class="workflow-grid" style="grid-template-columns: repeat(2, 1fr);">
 
-        <div class="card" data-id="State-edge-simulator" style="border-left: 3px solid #7C3AED;">
+        <div class="card" data-id="State-edge-simulator" data-has-case="true" style="border-left: 3px solid #7C3AED;">
           <div class="card-meta">
             <span class="tier-badge p0">P0</span>
+            <span class="case-badge">★ 사례</span>
           </div>
           <div class="card-title">State-edge-simulator</div>
           <div class="card-desc">화면 설명 입력 &rarr; Loading/Empty/Error 상태 누락 자동 탐지 + 빈값&middot;최대 길이&middot;특수문자 등 엣지 케이스 데이터 자동 생성. 혼자 놓치기 쉬운 케이스를 선제 커버.</div>
@@ -909,9 +954,10 @@
           </div>
         </div>
 
-        <div class="card" data-id="HTML-to-Figma-refiner" style="border-left: 3px solid #7C3AED;">
+        <div class="card" data-id="HTML-to-Figma-refiner" data-has-case="true" style="border-left: 3px solid #7C3AED;">
           <div class="card-meta">
             <span class="tier-badge p1">P1</span>
+            <span class="case-badge">★ 사례</span>
           </div>
           <div class="card-title">HTML-to-Figma-refiner</div>
           <div class="card-desc">AI가 만든 HTML 프로토타입을 Figma로 전환해 UI 디테일(타이포&middot;간격&middot;컬러&middot;상태)을 다듬고 핸드오프용 원본으로 정제. 디자이너 최종 품질 보증 지점.</div>
@@ -938,10 +984,11 @@
       </div>
       <div class="workflow-grid" style="grid-template-columns: repeat(1, 1fr);">
 
-        <div class="card" data-id="Design-critique">
+        <div class="card" data-id="Design-critique" data-has-case="true">
           <div class="card-meta">
             <span class="tier-badge p1">P1</span>
             <span class="quick-win">Quick Win</span>
+            <span class="case-badge">★ 사례</span>
           </div>
           <div class="card-title">Design-critique</div>
           <div class="card-desc">AI 다각도 크리틱. 이미 운영 중, DESIGN.md의 원칙 기반 피드백으로 고도화.</div>
@@ -1005,9 +1052,10 @@
           </div>
         </div>
 
-        <div class="card" data-id="Responsive-support" style="border-left: 3px solid #FF3B30;">
+        <div class="card" data-id="Responsive-support" data-has-case="true" style="border-left: 3px solid #FF3B30;">
           <div class="card-meta">
             <span class="tier-badge p2">P2</span>
+            <span class="case-badge">★ 사례</span>
           </div>
           <div class="card-title">Responsive-support</div>
           <div class="card-desc">DS-prototype HTML에 CSS 미디어쿼리 포함하여 반응형 자동 해결. 브레이크포인트 가이드 문서화.</div>
@@ -1544,7 +1592,11 @@
         "PO가 HTML 프로토타입으로 직접 아이데이션 가능"
       ],
       solutionTypes: ["Claude Project · ODS 컨텍스트", "Skill · Registry"],
-      prereq: "ODS 컴포넌트 정비, Design-pattern-library 선행"
+      prereq: "ODS 컴포넌트 정비, Design-pattern-library 선행",
+      cases: [
+        { type: "video", src: "cases/DS-prototype.mov", caption: "팀원 사례: DS-prototype 실행 데모" },
+        { type: "image", src: "cases/DS-prototype1.gif", caption: "팀원 사례: DS-prototype 생성 흐름" }
+      ]
     },
     "UT-prototyping": {
       tier: "P1",
@@ -1603,7 +1655,10 @@
         "원칙 기반 객관적 피드백으로 전환"
       ],
       solutionTypes: ["Slack · 크리틱 봇", "문서 · 원칙 기반 피드백"],
-      prereq: "기존 크리틱 봇 운영 중"
+      prereq: "기존 크리틱 봇 운영 중",
+      cases: [
+        { type: "image", src: "cases/Design-critique.png", caption: "팀원 사례: Design-critique 운영 예시" }
+      ]
     },
     "State-edge-simulator": {
       tier: "P0",
@@ -1632,7 +1687,10 @@
         "텍스트 관련 QA 이슈 50%+ 감소"
       ],
       solutionTypes: ["Skill · 상태 체크리스트", "Skill · 엣지 케이스 생성", "기존 도구 · Content Reel"],
-      prereq: "상태 체크리스트 및 엣지 데이터 시나리오 정의"
+      prereq: "상태 체크리스트 및 엣지 데이터 시나리오 정의",
+      cases: [
+        { type: "image", src: "cases/State-edge-simulator.gif", caption: "팀원 사례: State-edge-simulator 실행 흐름" }
+      ]
     },
     "HTML-to-Figma-refiner": {
       tier: "P1",
@@ -1661,7 +1719,10 @@
         "핸드오프 원본(Figma) 품질 표준화"
       ],
       solutionTypes: ["기존 도구 · Figma", "Skill · HTML → Figma 변환"],
-      prereq: "DS-prototype HTML 결과물, ODS Figma 라이브러리"
+      prereq: "DS-prototype HTML 결과물, ODS Figma 라이브러리",
+      cases: [
+        { type: "image", src: "cases/HTML-to-Figma-refiner.png", caption: "팀원 사례: HTML → Figma 전환 결과" }
+      ]
     },
     "Complete-handoff-doc": {
       tier: "P0",
@@ -1868,7 +1929,10 @@
       reference: "Vercel v0가 자동 반응형 HTML 생성",
       successMetrics: ["반응형 대응 추가 작업 시간 감소"],
       solutionTypes: ["문서 · 반응형 가이드", "기존 도구 · Figma 플러그인"],
-      prereq: "브레이크포인트 가이드"
+      prereq: "브레이크포인트 가이드",
+      cases: [
+        { type: "video", src: "cases/Responsive-support.mov", caption: "팀원 사례: Responsive-support 반응형 동작" }
+      ]
     },
   };
 
@@ -1913,6 +1977,23 @@
     html += '</div>';
 
     html += '<div class="modal-goal">' + d.goal + '</div>';
+
+    // Team cases (videos / images)
+    if (d.cases && d.cases.length) {
+      html += '<div class="modal-section"><div class="modal-section-title">팀원 사례</div>';
+      html += '<div class="modal-case-grid">';
+      d.cases.forEach(function(c) {
+        html += '<div class="modal-case-item">';
+        if (c.type === 'video') {
+          html += '<video src="' + c.src + '" controls preload="metadata" playsinline></video>';
+        } else {
+          html += '<img src="' + c.src + '" alt="' + (c.caption || '') + '" loading="lazy">';
+        }
+        if (c.caption) html += '<div class="modal-case-caption">' + c.caption + '</div>';
+        html += '</div>';
+      });
+      html += '</div></div>';
+    }
 
     // Diagnosis severity
     if (d.diagnosis) {
